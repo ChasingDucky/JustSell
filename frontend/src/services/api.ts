@@ -540,6 +540,88 @@ class ApiService {
   async updateShipmentStatus(id: string, data: any) {
     return this.api.post(`/shipping/${id}/update-status`, data);
   }
+
+  // User Profile & Preferences
+  async getUserProfile() {
+    return this.api.get('/profile');
+  }
+
+  async getProfileInsights() {
+    return this.api.get('/profile/insights');
+  }
+
+  async updateDemographics(data: any) {
+    return this.api.put('/profile/demographics', data);
+  }
+
+  async updatePreferredCategories(categories: string[]) {
+    return this.api.put('/profile/preferences/categories', { categories });
+  }
+
+  async blockCategory(category: string) {
+    return this.api.post('/profile/block/category', { category });
+  }
+
+  async unblockCategory(category: string) {
+    return this.api.post('/profile/unblock/category', { category });
+  }
+
+  async blockSeller(sellerId: string) {
+    return this.api.post('/profile/block/seller', { sellerId });
+  }
+
+  async unblockSeller(sellerId: string) {
+    return this.api.post('/profile/unblock/seller', { sellerId });
+  }
+
+  async updatePricePreference(minPrice?: number, maxPrice?: number) {
+    return this.api.put('/profile/preferences/price', { minPrice, maxPrice });
+  }
+
+  async updateRecommendationSettings(settings: any) {
+    return this.api.put('/profile/preferences/recommendations', settings);
+  }
+
+  async rebuildProfile() {
+    return this.api.post('/profile/rebuild');
+  }
+
+  // Smart Recommendations
+  async getPersonalizedRecommendations(params?: any) {
+    return this.api.get('/smart-recommendations/personalized', { params });
+  }
+
+  async getSimilarItems(itemType: 'card' | 'listing', itemId: string, limit?: number) {
+    return this.api.get(`/smart-recommendations/similar/${itemType}/${itemId}`, {
+      params: { limit },
+    });
+  }
+
+  async recordRecommendationFeedback(data: any) {
+    return this.api.post('/smart-recommendations/feedback', data);
+  }
+
+  async trackBehavior(data: any) {
+    return this.api.post('/smart-recommendations/track', data);
+  }
+
+  async getBehaviorAnalytics(days?: number) {
+    return this.api.get('/smart-recommendations/analytics/behavior', {
+      params: { days },
+    });
+  }
+
+  async getRecentViews(limit?: number) {
+    return this.api.get('/smart-recommendations/history/views', {
+      params: { limit },
+    });
+  }
+
+  async getPurchaseHistory(limit?: number) {
+    return this.api.get('/smart-recommendations/history/purchases', {
+      params: { limit },
+    });
+  }
 }
 
 export default new ApiService();

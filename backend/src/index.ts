@@ -41,6 +41,8 @@ import subscriptionRoutes from './routes/subscription.routes';
 import suboneRoutes from './routes/subone.routes';
 import shippingRoutes from './routes/shipping.routes';
 import addressRoutes from './routes/address.routes';
+import profileRoutes from './routes/profile.routes';
+import smartRecommendationRoutes from './routes/smartRecommendation.routes';
 
 // Import API documentation
 import { setupSwagger } from './config/swagger';
@@ -125,6 +127,8 @@ class App {
     this.app.use(`${apiPrefix}/subone`, suboneRoutes); // SubONE family membership
     this.app.use(`${apiPrefix}/shipping`, shippingRoutes); // Shipping and logistics
     this.app.use(`${apiPrefix}/addresses`, addressRoutes); // Shipping addresses
+    this.app.use(`${apiPrefix}/profile`, profileRoutes); // User profile and preferences
+    this.app.use(`${apiPrefix}/smart-recommendations`, smartRecommendationRoutes); // Smart recommendations and behavior tracking
   }
 
   private initializeErrorHandling(): void {

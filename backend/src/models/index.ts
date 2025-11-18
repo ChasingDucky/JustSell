@@ -13,6 +13,9 @@ import Subscription from './Subscription';
 import SubONEMembership from './SubONEMembership';
 import ShippingAddress from './ShippingAddress';
 import Shipment from './Shipment';
+import UserProfile from './UserProfile';
+import UserBehavior from './UserBehavior';
+import RecommendationFeedback from './RecommendationFeedback';
 
 // Define associations
 
@@ -326,6 +329,36 @@ Shipment.belongsTo(ShippingAddress, {
   as: 'shippingAddress',
 });
 
+// User <-> UserProfile (One-to-One)
+User.hasOne(UserProfile, {
+  foreignKey: 'userId',
+  as: 'profile',
+});
+UserProfile.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// User <-> UserBehavior (One-to-Many)
+User.hasMany(UserBehavior, {
+  foreignKey: 'userId',
+  as: 'behaviors',
+});
+UserBehavior.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// User <-> RecommendationFeedback (One-to-Many)
+User.hasMany(RecommendationFeedback, {
+  foreignKey: 'userId',
+  as: 'recommendationFeedbacks',
+});
+RecommendationFeedback.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
 export {
   User,
   Supplier,
@@ -342,4 +375,7 @@ export {
   SubONEMembership,
   ShippingAddress,
   Shipment,
+  UserProfile,
+  UserBehavior,
+  RecommendationFeedback,
 };
