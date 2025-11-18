@@ -165,6 +165,10 @@ class AIAssistantService {
       throw new Error(`Agent type ${selectedAgentType} not found`);
     }
 
+    // Get user's API configuration
+    const aiSettingsService = (await import('../aiSettings.service')).default;
+    const apiConfig = await aiSettingsService.getApiConfig(conversation.userId);
+
     // Build context from conversation history
     const context: AgentContext = {
       userId: conversation.userId,
@@ -173,6 +177,8 @@ class AIAssistantService {
         role: msg.role === 'user' ? 'user' : 'model',
         parts: msg.content,
       })),
+      userApiKey: apiConfig.userApiKey,
+      isPremiumUser: apiConfig.isPremiumUser,
     };
 
     // Get response from agent

@@ -79,7 +79,7 @@ Format response as JSON:
       }
 
       // Generate budget plan
-      const response = await this.generate(prompt, {
+      const response = await this.generate(prompt, context, context, context, {
         temperature: 0.6, // Lower temperature for more factual responses
         maxOutputTokens: 2048,
       });

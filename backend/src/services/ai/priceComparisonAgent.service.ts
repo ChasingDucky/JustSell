@@ -85,7 +85,7 @@ Format response as JSON:
       }
 
       // Generate comparison
-      const response = await this.generate(prompt, {
+      const response = await this.generate(prompt, context, context, context, {
         temperature: 0.5, // Lower temperature for factual comparison
         maxOutputTokens: 2048,
       });

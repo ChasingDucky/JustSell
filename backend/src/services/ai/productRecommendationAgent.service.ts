@@ -59,7 +59,7 @@ Format your response as JSON with this structure:
       const fullPrompt = `${prompt}\n\nAvailable Products:\n${productContext}`;
 
       // Generate recommendation
-      const response = await this.generate(fullPrompt, {
+      const response = await this.generate(fullPrompt, context, {
         temperature: 0.8,
         maxOutputTokens: 2048,
       });

@@ -16,6 +16,7 @@ import Shipment from './Shipment';
 import UserProfile from './UserProfile';
 import UserBehavior from './UserBehavior';
 import RecommendationFeedback from './RecommendationFeedback';
+import UserAISettings from './UserAISettings';
 
 // Define associations
 
@@ -359,6 +360,16 @@ RecommendationFeedback.belongsTo(User, {
   as: 'user',
 });
 
+// User <-> UserAISettings (One-to-One)
+User.hasOne(UserAISettings, {
+  foreignKey: 'userId',
+  as: 'aiSettings',
+});
+UserAISettings.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
 export {
   User,
   Supplier,
@@ -378,4 +389,5 @@ export {
   UserProfile,
   UserBehavior,
   RecommendationFeedback,
+  UserAISettings,
 };

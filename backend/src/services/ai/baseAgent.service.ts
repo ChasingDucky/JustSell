@@ -1,12 +1,16 @@
 import geminiClient from '../../config/gemini';
 import UserProfile from '../../models/UserProfile';
 import userProfileService from '../userProfile.service';
+import UserAISettings from '../../models/UserAISettings';
+import SubONEMembership from '../../models/SubONEMembership';
 
 export interface AgentContext {
   userId?: string;
   userProfile?: any;
   conversationHistory?: Array<{ role: 'user' | 'model'; parts: string }>;
   sessionId?: string;
+  userApiKey?: string;
+  isPremiumUser?: boolean;
 }
 
 export interface AgentResponse {
@@ -80,16 +84,17 @@ export abstract class BaseAIAgent {
    */
   protected async generate(
     prompt: string,
+    context: AgentContext,
     options?: {
       temperature?: number;
       maxOutputTokens?: number;
     }
   ): Promise<string> {
-    if (!geminiClient.isAvailable()) {
-      throw new Error('Gemini API is not available. Please configure GEMINI_API_KEY.');
-    }
-
-    return await geminiClient.generateContent(prompt, options);
+    return await geminiClient.generateContent(prompt, {
+      ...options,
+      userApiKey: context.userApiKey,
+      isPremiumUser: context.isPremiumUser,
+    });
   }
 
   /**
@@ -97,16 +102,17 @@ export abstract class BaseAIAgent {
    */
   protected async chat(
     messages: Array<{ role: 'user' | 'model'; parts: string }>,
+    context: AgentContext,
     options?: {
       temperature?: number;
       maxOutputTokens?: number;
     }
   ): Promise<string> {
-    if (!geminiClient.isAvailable()) {
-      throw new Error('Gemini API is not available. Please configure GEMINI_API_KEY.');
-    }
-
-    return await geminiClient.chat(messages, options);
+    return await geminiClient.chat(messages, {
+      ...options,
+      userApiKey: context.userApiKey,
+      isPremiumUser: context.isPremiumUser,
+    });
   }
 
   /**

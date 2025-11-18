@@ -657,6 +657,30 @@ class ApiService {
   async quickAIQuery(message: string, agentType?: string) {
     return this.api.post('/ai-assistant/quick-query', { message, agentType });
   }
+
+  // AI Settings
+  async getAISettings() {
+    return this.api.get('/ai-settings');
+  }
+
+  async updateGeminiApiKey(geminiApiKey: string) {
+    return this.api.post('/ai-settings/api-key', { geminiApiKey });
+  }
+
+  async removeGeminiApiKey() {
+    return this.api.delete('/ai-settings/api-key');
+  }
+
+  async updateAIPreferences(preferences: {
+    enableAI?: boolean;
+    preferredModel?: string;
+  }) {
+    return this.api.put('/ai-settings/preferences', preferences);
+  }
+
+  async getAvailableAIModels() {
+    return this.api.get('/ai-settings/models');
+  }
 }
 
 export default new ApiService();

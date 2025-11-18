@@ -92,7 +92,7 @@ Format response as JSON:
       }
 
       // Generate analysis
-      const response = await this.generate(prompt, {
+      const response = await this.generate(prompt, context, context, context, {
         temperature: 0.6,
         maxOutputTokens: 2048,
       });
