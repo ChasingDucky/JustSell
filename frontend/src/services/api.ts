@@ -622,6 +622,41 @@ class ApiService {
       params: { limit },
     });
   }
+
+  // AI Shopping Assistants
+  async getAIAgents() {
+    return this.api.get('/ai-assistant/agents');
+  }
+
+  async startAIConversation(sessionId?: string) {
+    return this.api.post('/ai-assistant/conversation/start', { sessionId });
+  }
+
+  async chatWithAI(data: {
+    conversationId?: string;
+    message: string;
+    agentType?: string;
+  }) {
+    return this.api.post('/ai-assistant/chat', data);
+  }
+
+  async getAIConversationHistory(conversationId: string) {
+    return this.api.get(`/ai-assistant/conversation/${conversationId}/history`);
+  }
+
+  async switchAIAgent(conversationId: string, agentType: string) {
+    return this.api.post(`/ai-assistant/conversation/${conversationId}/switch-agent`, {
+      agentType,
+    });
+  }
+
+  async clearAIConversation(conversationId: string) {
+    return this.api.delete(`/ai-assistant/conversation/${conversationId}`);
+  }
+
+  async quickAIQuery(message: string, agentType?: string) {
+    return this.api.post('/ai-assistant/quick-query', { message, agentType });
+  }
 }
 
 export default new ApiService();

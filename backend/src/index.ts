@@ -43,6 +43,7 @@ import shippingRoutes from './routes/shipping.routes';
 import addressRoutes from './routes/address.routes';
 import profileRoutes from './routes/profile.routes';
 import smartRecommendationRoutes from './routes/smartRecommendation.routes';
+import aiAssistantRoutes from './routes/aiAssistant.routes';
 
 // Import API documentation
 import { setupSwagger } from './config/swagger';
@@ -129,6 +130,7 @@ class App {
     this.app.use(`${apiPrefix}/addresses`, addressRoutes); // Shipping addresses
     this.app.use(`${apiPrefix}/profile`, profileRoutes); // User profile and preferences
     this.app.use(`${apiPrefix}/smart-recommendations`, smartRecommendationRoutes); // Smart recommendations and behavior tracking
+    this.app.use(`${apiPrefix}/ai-assistant`, aiAssistantRoutes); // AI shopping assistants powered by Gemini
   }
 
   private initializeErrorHandling(): void {
