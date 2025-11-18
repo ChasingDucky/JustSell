@@ -1,62 +1,38 @@
-import { Router, Request, Response } from 'express';
-import { authenticate, optionalAuth } from '../middleware/auth';
-import aiAssistantService, { AgentType } from '../services/ai/aiAssistant.service';
+import express from 'express';
+import { authenticateToken } from '../middleware/auth.middleware';
+import aiAssistantService from '../services/ai/aiAssistant.service';
 
-const router = Router();
+const router = express.Router();
 
-// Get available AI agents
-router.get('/agents', optionalAuth, async (req: Request, res: Response) => {
+/**
+ * @route   GET /api/ai-assistant/agents
+ * @desc    Get all available AI agents
+ * @access  Public
+ */
+router.get('/agents', (req, res) => {
   try {
     const agents = aiAssistantService.getAvailableAgents();
-
     res.json({
       success: true,
       data: agents,
     });
   } catch (error: any) {
-    console.error('Error getting agents:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to get agents',
+      message: error.message,
     });
   }
 });
 
-// Start a new conversation
-router.post('/conversation/start', authenticate, async (req: Request, res: Response) => {
+/**
+ * @route   POST /api/ai-assistant/chat
+ * @desc    Chat with AI assistant
+ * @access  Private
+ */
+router.post('/chat', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    const { sessionId } = req.body;
-
-    const conversationId = aiAssistantService.startConversation(userId, sessionId);
-
-    res.json({
-      success: true,
-      data: { conversationId },
-      message: 'Conversation started',
-    });
-  } catch (error: any) {
-    console.error('Error starting conversation:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to start conversation',
-    });
-  }
-});
-
-// Chat with AI assistant
-router.post('/chat', authenticate, async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    const { conversationId, message, agentType } = req.body;
+    const { message, conversationId, agentType } = req.body;
+    const userId = req.user!.id;
 
     if (!message) {
       return res.status(400).json({
@@ -65,89 +41,63 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
       });
     }
 
-    // Use or create conversationId
-    const convId = conversationId || `conv_${userId}_${Date.now()}`;
+    // Use conversationId or create new one based on userId
+    const sessionId = conversationId || `conv_${userId}_${Date.now()}`;
 
-    // Validate agent type if provided
-    if (agentType && !Object.values(AgentType).includes(agentType)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid agent type',
-      });
-    }
-
-    const result = await aiAssistantService.chat(convId, message, agentType);
+    const result = await aiAssistantService.chat(sessionId, message, agentType);
 
     res.json({
       success: true,
       data: result,
     });
   } catch (error: any) {
-    console.error('Error in chat:', error);
+    console.error('AI chat error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to process chat',
+      message: error.message || 'Failed to process message',
     });
   }
 });
 
-// Get conversation history
-router.get('/conversation/:conversationId/history', authenticate, async (req: Request, res: Response) => {
+/**
+ * @route   GET /api/ai-assistant/conversations/:conversationId
+ * @desc    Get conversation history
+ * @access  Private
+ */
+router.get('/conversations/:conversationId', authenticateToken, (req, res) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
     const { conversationId } = req.params;
-
-    // Verify conversation belongs to user
-    if (!conversationId.includes(userId)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied',
-      });
-    }
-
     const history = aiAssistantService.getHistory(conversationId);
 
     res.json({
       success: true,
-      data: history,
+      data: {
+        conversationId,
+        messages: history,
+      },
     });
   } catch (error: any) {
-    console.error('Error getting history:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to get conversation history',
+      message: error.message,
     });
   }
 });
 
-// Switch agent in conversation
-router.post('/conversation/:conversationId/switch-agent', authenticate, async (req: Request, res: Response) => {
+/**
+ * @route   POST /api/ai-assistant/conversations/:conversationId/switch-agent
+ * @desc    Switch agent in conversation
+ * @access  Private
+ */
+router.post('/conversations/:conversationId/switch-agent', authenticateToken, (req, res) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
     const { conversationId } = req.params;
     const { agentType } = req.body;
 
-    // Verify conversation belongs to user
-    if (!conversationId.includes(userId)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied',
-      });
-    }
-
-    // Validate agent type
-    if (!Object.values(AgentType).includes(agentType)) {
+    if (!agentType) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid agent type',
+        message: 'Agent type is required',
       });
     }
 
@@ -156,83 +106,33 @@ router.post('/conversation/:conversationId/switch-agent', authenticate, async (r
     res.json({
       success: true,
       message: 'Agent switched successfully',
-      data: { agentType },
     });
   } catch (error: any) {
-    console.error('Error switching agent:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to switch agent',
+      message: error.message,
     });
   }
 });
 
-// Clear conversation
-router.delete('/conversation/:conversationId', authenticate, async (req: Request, res: Response) => {
+/**
+ * @route   DELETE /api/ai-assistant/conversations/:conversationId
+ * @desc    Clear conversation history
+ * @access  Private
+ */
+router.delete('/conversations/:conversationId', authenticateToken, (req, res) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
     const { conversationId } = req.params;
-
-    // Verify conversation belongs to user
-    if (!conversationId.includes(userId)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied',
-      });
-    }
-
     aiAssistantService.clearConversation(conversationId);
 
     res.json({
       success: true,
-      message: 'Conversation cleared',
+      message: 'Conversation cleared successfully',
     });
   } catch (error: any) {
-    console.error('Error clearing conversation:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to clear conversation',
-    });
-  }
-});
-
-// Quick query (no conversation context)
-router.post('/quick-query', authenticate, async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    const { message, agentType } = req.body;
-
-    if (!message) {
-      return res.status(400).json({
-        success: false,
-        message: 'Message is required',
-      });
-    }
-
-    // Create temporary conversation
-    const tempConvId = `temp_${userId}_${Date.now()}`;
-    const result = await aiAssistantService.chat(tempConvId, message, agentType);
-
-    // Clean up temporary conversation
-    aiAssistantService.clearConversation(tempConvId);
-
-    res.json({
-      success: true,
-      data: result.response,
-    });
-  } catch (error: any) {
-    console.error('Error in quick query:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to process query',
+      message: error.message,
     });
   }
 });

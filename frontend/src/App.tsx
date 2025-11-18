@@ -22,6 +22,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PaymentPage from './pages/PaymentPage';
 import DashboardPage from './pages/DashboardPage';
+import AIAssistantPage from './pages/AIAssistantPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Utils
@@ -103,6 +104,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <PaymentPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/ai-assistant"
+              element={
+                <PrivateRoute>
+                  <AIAssistantPage />
                 </PrivateRoute>
               }
             />

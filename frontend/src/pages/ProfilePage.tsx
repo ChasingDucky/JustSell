@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { setUser } from '../store/slices/authSlice';
 import api from '../services/api';
+import AISettingsTab from '../components/ai/AISettingsTab';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -130,6 +131,10 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
           </Card>
+        </TabPane>
+
+        <TabPane tab="AI Assistant" key="ai">
+          <AISettingsTab />
         </TabPane>
       </Tabs>
 

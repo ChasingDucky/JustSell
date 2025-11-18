@@ -8,6 +8,7 @@ import {
   LogoutOutlined,
   DashboardOutlined,
   SearchOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 import { RootState } from '../../store';
 import { logout } from '../../store/slices/authSlice';
@@ -76,6 +77,11 @@ const Header: React.FC = () => {
           <Menu.Item key="browse">
             <Link to="/search">Browse Cards</Link>
           </Menu.Item>
+          {isAuthenticated && (
+            <Menu.Item key="ai-assistant" icon={<RobotOutlined />}>
+              <Link to="/ai-assistant">AI Assistant</Link>
+            </Menu.Item>
+          )}
         </Menu>
       </div>
 

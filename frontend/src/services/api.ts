@@ -681,6 +681,33 @@ class ApiService {
   async getAvailableAIModels() {
     return this.api.get('/ai-settings/models');
   }
+
+  // AI Assistant
+  async getAvailableAgents() {
+    return this.api.get('/ai-assistant/agents');
+  }
+
+  async chatWithAI(data: {
+    message: string;
+    conversationId?: string;
+    agentType?: string;
+  }) {
+    return this.api.post('/ai-assistant/chat', data);
+  }
+
+  async getConversationHistory(conversationId: string) {
+    return this.api.get(`/ai-assistant/conversations/${conversationId}`);
+  }
+
+  async switchAgent(conversationId: string, agentType: string) {
+    return this.api.post(`/ai-assistant/conversations/${conversationId}/switch-agent`, {
+      agentType,
+    });
+  }
+
+  async clearConversation(conversationId: string) {
+    return this.api.delete(`/ai-assistant/conversations/${conversationId}`);
+  }
 }
 
 export default new ApiService();
