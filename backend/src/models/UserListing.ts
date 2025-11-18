@@ -52,6 +52,15 @@ interface UserListingAttributes {
   rejectedAt?: Date;
   publishedAt?: Date;
   lastStockUpdate?: Date;
+  // Physical product attributes
+  isPhysicalProduct: boolean;
+  requiresShipping?: boolean;
+  weight?: number; // in kg
+  length?: number; // in cm
+  width?: number; // in cm
+  height?: number; // in cm
+  shippingOriginCountry?: string;
+  shippingOriginPostalCode?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -97,6 +106,15 @@ class UserListing
   public rejectedAt?: Date;
   public publishedAt?: Date;
   public lastStockUpdate?: Date;
+  // Physical product attributes
+  public isPhysicalProduct!: boolean;
+  public requiresShipping?: boolean;
+  public weight?: number;
+  public length?: number;
+  public width?: number;
+  public height?: number;
+  public shippingOriginCountry?: string;
+  public shippingOriginPostalCode?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -298,6 +316,46 @@ UserListing.init(
     },
     lastStockUpdate: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    // Physical product fields
+    isPhysicalProduct: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    requiresShipping: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: true,
+    },
+    weight: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: 'Weight in kilograms',
+    },
+    length: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: 'Length in centimeters',
+    },
+    width: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: 'Width in centimeters',
+    },
+    height: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: 'Height in centimeters',
+    },
+    shippingOriginCountry: {
+      type: DataTypes.STRING(2),
+      allowNull: true,
+      comment: 'ISO country code for shipping origin',
+    },
+    shippingOriginPostalCode: {
+      type: DataTypes.STRING(20),
       allowNull: true,
     },
   },

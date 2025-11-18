@@ -39,6 +39,8 @@ import escrowRoutes from './routes/escrow.routes';
 import disputeRoutes from './routes/dispute.routes';
 import subscriptionRoutes from './routes/subscription.routes';
 import suboneRoutes from './routes/subone.routes';
+import shippingRoutes from './routes/shipping.routes';
+import addressRoutes from './routes/address.routes';
 
 // Import API documentation
 import { setupSwagger } from './config/swagger';
@@ -121,6 +123,8 @@ class App {
     this.app.use(`${apiPrefix}/disputes`, disputeRoutes); // Dispute resolution
     this.app.use(`${apiPrefix}/subscriptions`, subscriptionRoutes); // Subscription tracking
     this.app.use(`${apiPrefix}/subone`, suboneRoutes); // SubONE family membership
+    this.app.use(`${apiPrefix}/shipping`, shippingRoutes); // Shipping and logistics
+    this.app.use(`${apiPrefix}/addresses`, addressRoutes); // Shipping addresses
   }
 
   private initializeErrorHandling(): void {

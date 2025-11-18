@@ -478,6 +478,68 @@ class ApiService {
   async reactivateSubONE() {
     return this.api.post('/subone/reactivate');
   }
+
+  // Shipping Addresses
+  async createAddress(data: any) {
+    return this.api.post('/addresses', data);
+  }
+
+  async getUserAddresses() {
+    return this.api.get('/addresses');
+  }
+
+  async getDefaultAddress() {
+    return this.api.get('/addresses/default');
+  }
+
+  async getAddressById(id: string) {
+    return this.api.get(`/addresses/${id}`);
+  }
+
+  async updateAddress(id: string, data: any) {
+    return this.api.put(`/addresses/${id}`, data);
+  }
+
+  async setDefaultAddress(id: string) {
+    return this.api.post(`/addresses/${id}/set-default`);
+  }
+
+  async deleteAddress(id: string) {
+    return this.api.delete(`/addresses/${id}`);
+  }
+
+  async validateAddress(data: any) {
+    return this.api.post('/addresses/validate', data);
+  }
+
+  // Shipping & Logistics
+  async calculateShippingRates(data: any) {
+    return this.api.post('/shipping/calculate-rates', data);
+  }
+
+  async createShipment(data: any) {
+    return this.api.post('/shipping', data);
+  }
+
+  async trackShipment(trackingNumber: string) {
+    return this.api.get(`/shipping/track/${trackingNumber}`);
+  }
+
+  async getMyShipments(status?: string) {
+    return this.api.get('/shipping/my-shipments', { params: { status } });
+  }
+
+  async confirmDelivery(id: string) {
+    return this.api.post(`/shipping/${id}/confirm-delivery`);
+  }
+
+  async cancelShipment(id: string, reason?: string) {
+    return this.api.post(`/shipping/${id}/cancel`, { reason });
+  }
+
+  async updateShipmentStatus(id: string, data: any) {
+    return this.api.post(`/shipping/${id}/update-status`, data);
+  }
 }
 
 export default new ApiService();
