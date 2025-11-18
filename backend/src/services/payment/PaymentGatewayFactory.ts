@@ -3,6 +3,7 @@ import { StripeGateway } from './StripeGateway';
 import { PayPalGateway } from './PayPalGateway';
 import { AlipayGateway } from './AlipayGateway';
 import { WeChatGateway } from './WeChatGateway';
+import { CryptoGateway } from './CryptoGateway';
 import { config } from '../../config';
 
 /**
@@ -58,6 +59,15 @@ export class PaymentGatewayFactory {
         );
         break;
 
+      case 'crypto':
+      case 'cryptocurrency':
+        gateway = new CryptoGateway(
+          process.env.CRYPTO_API_KEY || 'demo_api_key',
+          process.env.CRYPTO_WEBHOOK_SECRET || 'demo_webhook_secret',
+          ['BTC', 'ETH', 'USDT', 'USDC', 'LTC', 'BCH']
+        );
+        break;
+
       default:
         throw new Error(`Unsupported payment provider: ${provider}`);
     }
@@ -72,7 +82,7 @@ export class PaymentGatewayFactory {
    * Get list of supported payment providers
    */
   static getSupportedProviders(): string[] {
-    return ['stripe', 'paypal', 'alipay', 'wechat'];
+    return ['stripe', 'paypal', 'alipay', 'wechat', 'crypto'];
   }
 
   /**
@@ -122,6 +132,16 @@ export class PaymentGatewayFactory {
         enabled: !!process.env.WECHAT_APP_ID,
         description: '微信支付',
         currencies: ['CNY'],
+      },
+      {
+        provider: 'crypto',
+        name: 'Cryptocurrency',
+        method: 'crypto',
+        icon: '₿',
+        enabled: true, // Always enabled in demo mode
+        description: 'Pay with Bitcoin, Ethereum, USDT, and more',
+        currencies: ['USD', 'EUR', 'GBP', 'CNY'],
+        supportedCryptos: ['BTC', 'ETH', 'USDT', 'USDC', 'LTC', 'BCH'],
       },
     ];
   }

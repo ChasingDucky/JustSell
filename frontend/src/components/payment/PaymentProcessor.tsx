@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Space, Typography, Alert, Spin, Result, QRCode, message } from 'antd';
 import { CheckCircleOutlined, LoadingOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import api from '../../services/api';
+import CryptoPaymentProcessor from './CryptoPaymentProcessor';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -174,6 +175,17 @@ const PaymentProcessor: React.FC<PaymentProcessorProps> = ({
         ]}
       />
     );
+  }
+
+  // Cryptocurrency payment
+  if (provider === 'crypto' || provider === 'cryptocurrency') {
+    return <CryptoPaymentProcessor payment={payment} onStatusChange={(status) => {
+      if (status === 'completed' && onSuccess) {
+        onSuccess(payment);
+      } else if (status === 'expired' && onError) {
+        onError(new Error('Payment expired'));
+      }
+    }} />;
   }
 
   // Card payment (Stripe)
