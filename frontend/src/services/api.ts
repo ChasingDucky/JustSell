@@ -408,6 +408,76 @@ class ApiService {
   async adminRefundEscrow(id: string, reason: string) {
     return this.api.post(`/escrow/${id}/admin-refund`, { reason });
   }
+
+  // Subscriptions
+  async createSubscription(data: any) {
+    return this.api.post('/subscriptions', data);
+  }
+
+  async getMySubscriptions(filters?: any) {
+    return this.api.get('/subscriptions/my-subscriptions', { params: filters });
+  }
+
+  async getSubscriptionAnalytics() {
+    return this.api.get('/subscriptions/analytics');
+  }
+
+  async getSavingsSuggestions() {
+    return this.api.get('/subscriptions/savings-suggestions');
+  }
+
+  async updateSubscription(id: string, data: any) {
+    return this.api.put(`/subscriptions/${id}`, data);
+  }
+
+  async cancelSubscription(id: string) {
+    return this.api.post(`/subscriptions/${id}/cancel`);
+  }
+
+  async deleteSubscription(id: string) {
+    return this.api.delete(`/subscriptions/${id}`);
+  }
+
+  // SubONE Membership
+  async getSubONETiers() {
+    return this.api.get('/subone/tiers');
+  }
+
+  async calculateSubONESavings(currentCost: number) {
+    return this.api.get('/subone/calculate-savings', { params: { currentCost } });
+  }
+
+  async subscribeToSubONE(tier: string, duration?: number) {
+    return this.api.post('/subone/subscribe', { tier, duration });
+  }
+
+  async getMySubONEMembership() {
+    return this.api.get('/subone/my-membership');
+  }
+
+  async upgradeSubONE(tier: string) {
+    return this.api.post('/subone/upgrade', { tier });
+  }
+
+  async addSubONEFamilyMember(email: string) {
+    return this.api.post('/subone/family/add', { email });
+  }
+
+  async removeSubONEFamilyMember(memberUserId: string) {
+    return this.api.post('/subone/family/remove', { memberUserId });
+  }
+
+  async activateSubONETrial() {
+    return this.api.post('/subone/activate-trial');
+  }
+
+  async cancelSubONE(reason?: string) {
+    return this.api.post('/subone/cancel', { reason });
+  }
+
+  async reactivateSubONE() {
+    return this.api.post('/subone/reactivate');
+  }
 }
 
 export default new ApiService();

@@ -37,6 +37,8 @@ import sellerRoutes from './routes/seller.routes';
 import listingRoutes from './routes/listing.routes';
 import escrowRoutes from './routes/escrow.routes';
 import disputeRoutes from './routes/dispute.routes';
+import subscriptionRoutes from './routes/subscription.routes';
+import suboneRoutes from './routes/subone.routes';
 
 // Import API documentation
 import { setupSwagger } from './config/swagger';
@@ -117,6 +119,8 @@ class App {
     this.app.use(`${apiPrefix}/listings`, listingRoutes); // C2C user listings
     this.app.use(`${apiPrefix}/escrow`, escrowRoutes); // Escrow transactions
     this.app.use(`${apiPrefix}/disputes`, disputeRoutes); // Dispute resolution
+    this.app.use(`${apiPrefix}/subscriptions`, subscriptionRoutes); // Subscription tracking
+    this.app.use(`${apiPrefix}/subone`, suboneRoutes); // SubONE family membership
   }
 
   private initializeErrorHandling(): void {

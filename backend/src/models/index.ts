@@ -9,6 +9,8 @@ import Seller from './Seller';
 import UserListing from './UserListing';
 import Escrow from './Escrow';
 import Dispute from './Dispute';
+import Subscription from './Subscription';
+import SubONEMembership from './SubONEMembership';
 
 // Define associations
 
@@ -222,6 +224,56 @@ Dispute.belongsTo(Escrow, {
   as: 'escrow',
 });
 
+// User <-> Subscription (One-to-Many)
+User.hasMany(Subscription, {
+  foreignKey: 'userId',
+  as: 'subscriptions',
+});
+Subscription.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// Card <-> Subscription (One-to-Many)
+Card.hasMany(Subscription, {
+  foreignKey: 'cardId',
+  as: 'subscriptions',
+});
+Subscription.belongsTo(Card, {
+  foreignKey: 'cardId',
+  as: 'card',
+});
+
+// Order <-> Subscription (One-to-Many)
+Order.hasMany(Subscription, {
+  foreignKey: 'orderId',
+  as: 'subscriptions',
+});
+Subscription.belongsTo(Order, {
+  foreignKey: 'orderId',
+  as: 'order',
+});
+
+// UserListing <-> Subscription (One-to-Many)
+UserListing.hasMany(Subscription, {
+  foreignKey: 'listingId',
+  as: 'subscriptions',
+});
+Subscription.belongsTo(UserListing, {
+  foreignKey: 'listingId',
+  as: 'listing',
+});
+
+// User <-> SubONEMembership (One-to-Many)
+User.hasMany(SubONEMembership, {
+  foreignKey: 'userId',
+  as: 'suboneMemberships',
+});
+SubONEMembership.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
 export {
   User,
   Supplier,
@@ -234,4 +286,6 @@ export {
   UserListing,
   Escrow,
   Dispute,
+  Subscription,
+  SubONEMembership,
 };
