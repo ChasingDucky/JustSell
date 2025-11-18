@@ -1,6 +1,7 @@
 import UserAISettings from '../models/UserAISettings';
 import SubONEMembership from '../models/SubONEMembership';
 import geminiClient from '../config/gemini';
+import { encryptApiKey, decryptApiKey, maskApiKey } from '../utils/encryption';
 
 class AISettingsService {
   /**
@@ -31,7 +32,11 @@ class AISettingsService {
 
     let settings = await this.getOrCreateSettings(userId);
 
-    settings.geminiApiKey = geminiApiKey;
+    // Encrypt API key before storing
+    const encryptedKey = encryptApiKey(geminiApiKey);
+    settings.geminiApiKeyEncrypted = encryptedKey;
+    settings.geminiApiKey = undefined; // Clear plain text field
+
     await settings.save();
 
     return settings;
@@ -120,8 +125,29 @@ class AISettingsService {
     const settings = await UserAISettings.findOne({ where: { userId } });
     const isPremiumUser = await this.checkPremiumStatus(userId);
 
+    // Decrypt API key if exists
+    let userApiKey: string | undefined;
+    if (settings?.geminiApiKeyEncrypted) {
+      try {
+        userApiKey = decryptApiKey(settings.geminiApiKeyEncrypted);
+      } catch (error) {
+        console.error('Failed to decrypt API key:', error);
+        userApiKey = undefined;
+      }
+    } else if (settings?.geminiApiKey) {
+      // Fallback for legacy plain text keys (migrate them)
+      userApiKey = settings.geminiApiKey;
+      try {
+        settings.geminiApiKeyEncrypted = encryptApiKey(userApiKey);
+        settings.geminiApiKey = undefined;
+        await settings.save();
+      } catch (error) {
+        console.error('Failed to migrate plain text API key:', error);
+      }
+    }
+
     return {
-      userApiKey: settings?.geminiApiKey,
+      userApiKey,
       isPremiumUser,
     };
   }

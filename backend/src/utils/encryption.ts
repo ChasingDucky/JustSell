@@ -70,3 +70,72 @@ export const maskCardCode = (cardCode: string): string => {
   if (cardCode.length <= 4) return cardCode;
   return '*'.repeat(cardCode.length - 4) + cardCode.slice(-4);
 };
+
+/**
+ * Encrypt API key using AES-256-GCM with authentication
+ */
+export const encryptApiKey = (apiKey: string): string => {
+  if (!apiKey) {
+    throw new Error('API key cannot be empty');
+  }
+
+  const algorithm = 'aes-256-gcm';
+  const key = Buffer.from(config.encryption.key, 'utf-8').slice(0, 32);
+  const iv = crypto.randomBytes(16);
+
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(apiKey, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+
+  const tag = cipher.getAuthTag();
+
+  // Return format: iv:encrypted:tag
+  return `${iv.toString('hex')}:${encrypted}:${tag.toString('hex')}`;
+};
+
+/**
+ * Decrypt API key
+ */
+export const decryptApiKey = (encryptedKey: string): string => {
+  if (!encryptedKey) {
+    throw new Error('Encrypted key cannot be empty');
+  }
+
+  try {
+    const algorithm = 'aes-256-gcm';
+    const key = Buffer.from(config.encryption.key, 'utf-8').slice(0, 32);
+    const parts = encryptedKey.split(':');
+
+    if (parts.length !== 3) {
+      throw new Error('Invalid encrypted key format');
+    }
+
+    const iv = Buffer.from(parts[0], 'hex');
+    const encrypted = parts[1];
+    const tag = Buffer.from(parts[2], 'hex');
+
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    decipher.setAuthTag(tag);
+
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+  } catch (error) {
+    throw new Error('Failed to decrypt API key: ' + (error as Error).message);
+  }
+};
+
+/**
+ * Mask API key for display (show prefix and last 4 chars)
+ */
+export const maskApiKey = (apiKey: string): string => {
+  if (!apiKey || apiKey.length <= 8) {
+    return '********';
+  }
+
+  const prefix = apiKey.substring(0, 7); // e.g., "sk-proj"
+  const lastFour = apiKey.substring(apiKey.length - 4);
+
+  return `${prefix}${'*'.repeat(20)}${lastFour}`;
+};

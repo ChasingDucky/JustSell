@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
+import { decryptApiKey, maskApiKey } from '../utils/encryption';
 
 interface UserAISettingsAttributes {
   id: string;
@@ -31,6 +32,28 @@ class UserAISettings
   // Helper method to check if user has configured API key
   public hasApiKey(): boolean {
     return !!(this.geminiApiKey || this.geminiApiKeyEncrypted);
+  }
+
+  // Override toJSON to mask API key
+  public toJSON() {
+    const values = super.toJSON();
+
+    // Never expose encrypted key
+    delete values.geminiApiKeyEncrypted;
+
+    // If plain text key exists, mask it
+    if (values.geminiApiKey) {
+      values.geminiApiKey = maskApiKey(values.geminiApiKey);
+      values.hasApiKey = true;
+    } else if (this.geminiApiKeyEncrypted) {
+      // Indicate presence without exposing value
+      values.geminiApiKey = '********';
+      values.hasApiKey = true;
+    } else {
+      values.hasApiKey = false;
+    }
+
+    return values;
   }
 }
 
