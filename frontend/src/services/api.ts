@@ -174,6 +174,39 @@ class ApiService {
   async getSupplierPerformance(limit?: number) {
     return this.api.get('/analytics/supplier-performance', { params: { limit } });
   }
+
+  // Reviews
+  async getCardReviews(cardId: string, page?: number, limit?: number) {
+    return this.api.get(`/reviews/card/${cardId}`, { params: { page, limit } });
+  }
+
+  async getCardReviewStats(cardId: string) {
+    return this.api.get(`/reviews/card/${cardId}/stats`);
+  }
+
+  async getUserReviews(page?: number, limit?: number) {
+    return this.api.get('/reviews/user', { params: { page, limit } });
+  }
+
+  async getReviewById(id: string) {
+    return this.api.get(`/reviews/${id}`);
+  }
+
+  async createReview(data: any) {
+    return this.api.post('/reviews', data);
+  }
+
+  async updateReview(id: string, data: any) {
+    return this.api.put(`/reviews/${id}`, data);
+  }
+
+  async deleteReview(id: string) {
+    return this.api.delete(`/reviews/${id}`);
+  }
+
+  async markReviewHelpful(id: string) {
+    return this.api.post(`/reviews/${id}/helpful`);
+  }
 }
 
 export default new ApiService();
