@@ -55,7 +55,7 @@ services:
       dockerfile: Dockerfile
     container_name: cardsky-frontend
     ports:
-      - "3000:3000"
+      - "2333:3000"
     environment:
       REACT_APP_API_URL: http://localhost:3001/api
     depends_on:
