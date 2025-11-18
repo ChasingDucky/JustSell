@@ -162,6 +162,18 @@ class ApiService {
   async getTopSellingCards(limit?: number, days?: number) {
     return this.api.get('/analytics/top-cards', { params: { limit, days } });
   }
+
+  async getRevenueByCategory(days?: number) {
+    return this.api.get('/analytics/revenue-by-category', { params: { days } });
+  }
+
+  async getCustomerInsights() {
+    return this.api.get('/analytics/customer-insights');
+  }
+
+  async getSupplierPerformance(limit?: number) {
+    return this.api.get('/analytics/supplier-performance', { params: { limit } });
+  }
 }
 
 export default new ApiService();
