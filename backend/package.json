@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "esbuild src/**/*.ts --outdir=dist --platform=node --format=cjs --external:pg-native",
     "start": "node dist/index.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
@@ -44,6 +44,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "esbuild": "^0.19.11",
     "@types/jest": "^29.5.11",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
