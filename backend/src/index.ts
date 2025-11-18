@@ -33,6 +33,10 @@ import searchRoutes from './routes/search.routes';
 import inventoryRoutes from './routes/inventory.routes';
 import recommendationRoutes from './routes/recommendation.routes';
 import reviewRoutes from './routes/review.routes';
+import sellerRoutes from './routes/seller.routes';
+import listingRoutes from './routes/listing.routes';
+import escrowRoutes from './routes/escrow.routes';
+import disputeRoutes from './routes/dispute.routes';
 
 // Import API documentation
 import { setupSwagger } from './config/swagger';
@@ -109,6 +113,10 @@ class App {
     this.app.use(`${apiPrefix}/inventory`, inventoryRoutes);
     this.app.use(`${apiPrefix}/recommendations`, recommendationRoutes);
     this.app.use(`${apiPrefix}/reviews`, reviewRoutes);
+    this.app.use(`${apiPrefix}/sellers`, sellerRoutes); // C2C seller management
+    this.app.use(`${apiPrefix}/listings`, listingRoutes); // C2C user listings
+    this.app.use(`${apiPrefix}/escrow`, escrowRoutes); // Escrow transactions
+    this.app.use(`${apiPrefix}/disputes`, disputeRoutes); // Dispute resolution
   }
 
   private initializeErrorHandling(): void {

@@ -5,6 +5,10 @@ import { CardCode } from './CardCode';
 import { Order } from './Order';
 import { Payment } from './Payment';
 import Review from './review.model';
+import Seller from './Seller';
+import UserListing from './UserListing';
+import Escrow from './Escrow';
+import Dispute from './Dispute';
 
 // Define associations
 
@@ -118,6 +122,106 @@ Review.belongsTo(Order, {
   as: 'order',
 });
 
+// User <-> Seller (One-to-One)
+User.hasOne(Seller, {
+  foreignKey: 'userId',
+  as: 'seller',
+});
+Seller.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// Seller <-> UserListing (One-to-Many)
+Seller.hasMany(UserListing, {
+  foreignKey: 'sellerId',
+  as: 'listings',
+});
+UserListing.belongsTo(Seller, {
+  foreignKey: 'sellerId',
+  as: 'seller',
+});
+
+// Order <-> Escrow (One-to-One)
+Order.hasOne(Escrow, {
+  foreignKey: 'orderId',
+  as: 'escrow',
+});
+Escrow.belongsTo(Order, {
+  foreignKey: 'orderId',
+  as: 'order',
+});
+
+// Seller <-> Escrow (One-to-Many)
+Seller.hasMany(Escrow, {
+  foreignKey: 'sellerId',
+  as: 'escrows',
+});
+Escrow.belongsTo(Seller, {
+  foreignKey: 'sellerId',
+  as: 'seller',
+});
+
+// UserListing <-> Escrow (One-to-Many)
+UserListing.hasMany(Escrow, {
+  foreignKey: 'listingId',
+  as: 'escrows',
+});
+Escrow.belongsTo(UserListing, {
+  foreignKey: 'listingId',
+  as: 'listing',
+});
+
+// Order <-> Dispute (One-to-Many)
+Order.hasMany(Dispute, {
+  foreignKey: 'orderId',
+  as: 'disputes',
+});
+Dispute.belongsTo(Order, {
+  foreignKey: 'orderId',
+  as: 'order',
+});
+
+// Seller <-> Dispute (One-to-Many)
+Seller.hasMany(Dispute, {
+  foreignKey: 'sellerId',
+  as: 'disputes',
+});
+Dispute.belongsTo(Seller, {
+  foreignKey: 'sellerId',
+  as: 'seller',
+});
+
+// User <-> Dispute (One-to-Many) for buyer
+User.hasMany(Dispute, {
+  foreignKey: 'buyerId',
+  as: 'disputes',
+});
+Dispute.belongsTo(User, {
+  foreignKey: 'buyerId',
+  as: 'buyer',
+});
+
+// UserListing <-> Dispute (One-to-Many)
+UserListing.hasMany(Dispute, {
+  foreignKey: 'listingId',
+  as: 'disputes',
+});
+Dispute.belongsTo(UserListing, {
+  foreignKey: 'listingId',
+  as: 'listing',
+});
+
+// Escrow <-> Dispute (One-to-Many)
+Escrow.hasMany(Dispute, {
+  foreignKey: 'escrowId',
+  as: 'disputes',
+});
+Dispute.belongsTo(Escrow, {
+  foreignKey: 'escrowId',
+  as: 'escrow',
+});
+
 export {
   User,
   Supplier,
@@ -126,4 +230,8 @@ export {
   Order,
   Payment,
   Review,
+  Seller,
+  UserListing,
+  Escrow,
+  Dispute,
 };

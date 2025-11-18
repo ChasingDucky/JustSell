@@ -224,6 +224,190 @@ class ApiService {
   async markReviewHelpful(id: string) {
     return this.api.post(`/reviews/${id}/helpful`);
   }
+
+  // Seller Management
+  async applyAsSeller(data: any) {
+    return this.api.post('/sellers/apply', data);
+  }
+
+  async getSellerProfile() {
+    return this.api.get('/sellers/me');
+  }
+
+  async getSellerDashboard() {
+    return this.api.get('/sellers/dashboard');
+  }
+
+  async updateSellerProfile(data: any) {
+    return this.api.put('/sellers/profile', data);
+  }
+
+  async getSellerById(id: string) {
+    return this.api.get(`/sellers/${id}`);
+  }
+
+  // User Listings
+  async createListing(data: any) {
+    return this.api.post('/listings', data);
+  }
+
+  async getMyListings(params?: any) {
+    return this.api.get('/listings/my-listings', { params });
+  }
+
+  async searchListings(params: any) {
+    return this.api.get('/listings/search', { params });
+  }
+
+  async getListingById(id: string, incrementView?: boolean) {
+    return this.api.get(`/listings/${id}`, { params: { view: incrementView } });
+  }
+
+  async updateListing(id: string, data: any) {
+    return this.api.put(`/listings/${id}`, data);
+  }
+
+  async submitListingForReview(id: string) {
+    return this.api.post(`/listings/${id}/submit`);
+  }
+
+  async updateListingStock(id: string, stock: number) {
+    return this.api.patch(`/listings/${id}/stock`, { stock });
+  }
+
+  async deleteListing(id: string) {
+    return this.api.delete(`/listings/${id}`);
+  }
+
+  async toggleListingFavorite(id: string, increment: boolean) {
+    return this.api.post(`/listings/${id}/favorite`, { increment });
+  }
+
+  // Escrow
+  async getEscrowByOrderId(orderId: string) {
+    return this.api.get(`/escrow/order/${orderId}`);
+  }
+
+  async getBuyerEscrows(status?: string) {
+    return this.api.get('/escrow/buyer/my-escrows', { params: { status } });
+  }
+
+  async getSellerEscrows(status?: string) {
+    return this.api.get('/escrow/seller/my-escrows', { params: { status } });
+  }
+
+  async releaseEscrow(id: string) {
+    return this.api.post(`/escrow/${id}/release`);
+  }
+
+  async refundEscrow(id: string, reason: string) {
+    return this.api.post(`/escrow/${id}/refund`, { reason });
+  }
+
+  // Disputes
+  async createDispute(data: any) {
+    return this.api.post('/disputes', data);
+  }
+
+  async getBuyerDisputes() {
+    return this.api.get('/disputes/buyer/my-disputes');
+  }
+
+  async getSellerDisputes() {
+    return this.api.get('/disputes/seller/my-disputes');
+  }
+
+  async getDisputeById(id: string) {
+    return this.api.get(`/disputes/${id}`);
+  }
+
+  async addSellerResponse(id: string, response: string) {
+    return this.api.post(`/disputes/${id}/seller-response`, { response });
+  }
+
+  async addBuyerResponse(id: string, response: string) {
+    return this.api.post(`/disputes/${id}/buyer-response`, { response });
+  }
+
+  async addDisputeEvidence(id: string, evidenceUrl: string) {
+    return this.api.post(`/disputes/${id}/evidence`, { evidenceUrl });
+  }
+
+  // Admin - Sellers
+  async getAllSellers(params?: any) {
+    return this.api.get('/sellers', { params });
+  }
+
+  async approveSeller(id: string) {
+    return this.api.post(`/sellers/${id}/approve`);
+  }
+
+  async rejectSeller(id: string, reason: string) {
+    return this.api.post(`/sellers/${id}/reject`, { reason });
+  }
+
+  async suspendSeller(id: string, reason: string) {
+    return this.api.post(`/sellers/${id}/suspend`, { reason });
+  }
+
+  async reactivateSeller(id: string) {
+    return this.api.post(`/sellers/${id}/reactivate`);
+  }
+
+  // Admin - Listings
+  async getPendingListings(page?: number, limit?: number) {
+    return this.api.get('/listings/admin/pending', { params: { page, limit } });
+  }
+
+  async approveListing(id: string, notes?: string) {
+    return this.api.post(`/listings/${id}/approve`, { notes });
+  }
+
+  async rejectListing(id: string, reason: string) {
+    return this.api.post(`/listings/${id}/reject`, { reason });
+  }
+
+  async suspendListing(id: string, reason: string) {
+    return this.api.post(`/listings/${id}/suspend`, { reason });
+  }
+
+  // Admin - Disputes
+  async getAllDisputes(params?: any) {
+    return this.api.get('/disputes', { params });
+  }
+
+  async assignDispute(id: string, adminId?: string) {
+    return this.api.post(`/disputes/${id}/assign`, { adminId });
+  }
+
+  async resolveDispute(id: string, resolution: string, notes?: string, refundAmount?: number) {
+    return this.api.post(`/disputes/${id}/resolve`, { resolution, notes, refundAmount });
+  }
+
+  async closeDispute(id: string) {
+    return this.api.post(`/disputes/${id}/close`);
+  }
+
+  async escalateDispute(id: string) {
+    return this.api.post(`/disputes/${id}/escalate`);
+  }
+
+  async getDisputeStats() {
+    return this.api.get('/disputes/admin/stats');
+  }
+
+  // Admin - Escrow
+  async getEscrowStats() {
+    return this.api.get('/escrow/admin/stats');
+  }
+
+  async adminReleaseEscrow(id: string) {
+    return this.api.post(`/escrow/${id}/admin-release`);
+  }
+
+  async adminRefundEscrow(id: string, reason: string) {
+    return this.api.post(`/escrow/${id}/admin-refund`, { reason });
+  }
 }
 
 export default new ApiService();
