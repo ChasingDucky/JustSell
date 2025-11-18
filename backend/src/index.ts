@@ -27,6 +27,7 @@ import orderRoutes from './routes/order.routes';
 import userRoutes from './routes/user.routes';
 import supplierRoutes from './routes/supplier.routes';
 import paymentRoutes from './routes/payment.routes';
+import enhancedPaymentRoutes from './routes/payment.routes.enhanced';
 import analyticsRoutes from './routes/analytics.routes';
 import searchRoutes from './routes/search.routes';
 import inventoryRoutes from './routes/inventory.routes';
@@ -102,7 +103,7 @@ class App {
     this.app.use(`${apiPrefix}/orders`, orderRoutes);
     this.app.use(`${apiPrefix}/users`, userRoutes);
     this.app.use(`${apiPrefix}/suppliers`, supplierRoutes);
-    this.app.use(`${apiPrefix}/payments`, paymentRoutes);
+    this.app.use(`${apiPrefix}/payments`, enhancedPaymentRoutes); // Enhanced multi-payment support
     this.app.use(`${apiPrefix}/analytics`, analyticsRoutes);
     this.app.use(`${apiPrefix}/search`, searchRoutes);
     this.app.use(`${apiPrefix}/inventory`, inventoryRoutes);

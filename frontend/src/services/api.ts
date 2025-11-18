@@ -119,16 +119,33 @@ class ApiService {
   }
 
   // Payments
+  async getPaymentMethods() {
+    return this.api.get('/payments/methods');
+  }
+
   async createPayment(data: any) {
     return this.api.post('/payments', data);
   }
 
+  async processPayment(id: string, data?: any) {
+    return this.api.post(`/payments/${id}/process`, data);
+  }
+
+  async getPaymentById(id: string) {
+    return this.api.get(`/payments/${id}`);
+  }
+
+  async refundPayment(id: string, reason?: string) {
+    return this.api.post(`/payments/${id}/refund`, { reason });
+  }
+
+  // Legacy payment methods (deprecated, use processPayment instead)
   async processStripePayment(id: string, token: string) {
-    return this.api.post(`/payments/${id}/stripe`, { token });
+    return this.processPayment(id, { token });
   }
 
   async processPayPalPayment(id: string, paypalOrderId: string) {
-    return this.api.post(`/payments/${id}/paypal`, { paypalOrderId });
+    return this.processPayment(id, { token: paypalOrderId });
   }
 
   // Recommendations
