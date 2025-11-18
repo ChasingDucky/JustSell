@@ -63,6 +63,14 @@ class ApiService {
     return this.api.get('/auth/profile');
   }
 
+  async updateProfile(data: any) {
+    return this.api.put('/users/profile', data);
+  }
+
+  async changePassword(data: any) {
+    return this.api.post('/users/change-password', data);
+  }
+
   // Cards
   async getCards(params?: any) {
     return this.api.get('/cards', { params });

@@ -3,6 +3,7 @@ import { AppError } from '../middleware/errorHandler';
 import { encryptCard } from '../utils/encryption';
 import { sequelize } from '../config/database';
 import { v4 as uuidv4 } from 'uuid';
+import notificationService from './notification.service';
 
 export class OrderService {
   /**
@@ -183,7 +184,9 @@ export class OrderService {
    * Update order status
    */
   async updateOrderStatus(orderId: string, status: Order['status']) {
-    const order = await Order.findByPk(orderId);
+    const order = await Order.findByPk(orderId, {
+      include: [{ model: User, as: 'user' }]
+    });
     if (!order) {
       throw new AppError('Order not found', 404);
     }
@@ -198,6 +201,9 @@ export class OrderService {
         { status: 'sold', soldAt: new Date() },
         { where: { orderId, status: 'reserved' } }
       );
+
+      // Send card codes to customer
+      await this.deliverCardCodes(orderId);
     } else if (status === 'cancelled') {
       await order.update({ cancelledAt: new Date() });
 
@@ -206,9 +212,60 @@ export class OrderService {
         { status: 'available', orderId: null, reservedAt: null },
         { where: { orderId, status: 'reserved' } }
       );
+
+      // Send cancellation notification
+      if (order.user) {
+        await notificationService.sendOrderCancellation(order, order.user).catch(err =>
+          console.error('Failed to send cancellation email:', err)
+        );
+      }
+    } else if (status === 'paid') {
+      // Send payment confirmation
+      if (order.user) {
+        await notificationService.sendPaymentConfirmation(order, order.user).catch(err =>
+          console.error('Failed to send payment confirmation:', err)
+        );
+      }
     }
 
     return order;
+  }
+
+  /**
+   * Deliver card codes to customer
+   */
+  async deliverCardCodes(orderId: string) {
+    const order = await Order.findByPk(orderId, {
+      include: [
+        { model: User, as: 'user' },
+        { model: CardCode, as: 'cardCodes' }
+      ]
+    });
+
+    if (!order || !order.user) {
+      throw new AppError('Order or user not found', 404);
+    }
+
+    const cardCodes = await CardCode.findAll({
+      where: { orderId, status: 'sold' }
+    });
+
+    if (cardCodes.length === 0) {
+      return;
+    }
+
+    // Send via selected delivery method
+    try {
+      if (order.deliveryMethod === 'email' && order.deliveryEmail) {
+        await notificationService.sendCardCodesEmail(order, order.user, cardCodes);
+      } else if (order.deliveryMethod === 'sms' && order.deliveryPhone) {
+        await notificationService.sendCardCodesSMS(order.deliveryPhone, order, cardCodes);
+      }
+      // For 'app' delivery, codes are just stored in the order and accessible through the app
+    } catch (error) {
+      console.error('Failed to deliver card codes:', error);
+      // Don't throw error, just log it - codes can still be accessed through the order
+    }
   }
 
   /**
