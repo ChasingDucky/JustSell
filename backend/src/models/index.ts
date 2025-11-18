@@ -17,6 +17,8 @@ import UserProfile from './UserProfile';
 import UserBehavior from './UserBehavior';
 import RecommendationFeedback from './RecommendationFeedback';
 import UserAISettings from './UserAISettings';
+import Conversation from './Conversation';
+import Message from './Message';
 
 // Define associations
 
@@ -370,6 +372,27 @@ UserAISettings.belongsTo(User, {
   as: 'user',
 });
 
+// User <-> Conversation (One-to-Many)
+User.hasMany(Conversation, {
+  foreignKey: 'userId',
+  as: 'conversations',
+});
+Conversation.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// Conversation <-> Message (One-to-Many)
+Conversation.hasMany(Message, {
+  foreignKey: 'conversationId',
+  as: 'messages',
+  onDelete: 'CASCADE',
+});
+Message.belongsTo(Conversation, {
+  foreignKey: 'conversationId',
+  as: 'conversation',
+});
+
 export {
   User,
   Supplier,
@@ -390,4 +413,6 @@ export {
   UserBehavior,
   RecommendationFeedback,
   UserAISettings,
+  Conversation,
+  Message,
 };
