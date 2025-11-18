@@ -41,6 +41,8 @@ export class Card extends Model {
   public termsAndConditions?: string;
   public tags?: string[];
   public metadata?: object;
+  public rating!: number;
+  public reviewCount!: number;
   public status!: 'active' | 'inactive' | 'out_of_stock';
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -135,6 +137,18 @@ Card.init(
       type: DataTypes.JSONB,
       allowNull: true,
       defaultValue: {},
+    },
+    rating: {
+      type: DataTypes.DECIMAL(2, 1),
+      allowNull: false,
+      defaultValue: 0,
+      comment: 'Average rating from reviews (0-5)',
+    },
+    reviewCount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: 'Total number of reviews',
     },
     status: {
       type: DataTypes.ENUM('active', 'inactive', 'out_of_stock'),

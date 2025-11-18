@@ -31,6 +31,7 @@ import analyticsRoutes from './routes/analytics.routes';
 import searchRoutes from './routes/search.routes';
 import inventoryRoutes from './routes/inventory.routes';
 import recommendationRoutes from './routes/recommendation.routes';
+import reviewRoutes from './routes/review.routes';
 
 // Import API documentation
 import { setupSwagger } from './config/swagger';
@@ -106,6 +107,7 @@ class App {
     this.app.use(`${apiPrefix}/search`, searchRoutes);
     this.app.use(`${apiPrefix}/inventory`, inventoryRoutes);
     this.app.use(`${apiPrefix}/recommendations`, recommendationRoutes);
+    this.app.use(`${apiPrefix}/reviews`, reviewRoutes);
   }
 
   private initializeErrorHandling(): void {

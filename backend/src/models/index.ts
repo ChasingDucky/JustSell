@@ -4,6 +4,7 @@ import { Card } from './Card';
 import { CardCode } from './CardCode';
 import { Order } from './Order';
 import { Payment } from './Payment';
+import Review from './review.model';
 
 // Define associations
 
@@ -87,6 +88,36 @@ Payment.belongsTo(User, {
   as: 'user',
 });
 
+// User <-> Review (One-to-Many)
+User.hasMany(Review, {
+  foreignKey: 'userId',
+  as: 'reviews',
+});
+Review.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+// Card <-> Review (One-to-Many)
+Card.hasMany(Review, {
+  foreignKey: 'cardId',
+  as: 'reviews',
+});
+Review.belongsTo(Card, {
+  foreignKey: 'cardId',
+  as: 'card',
+});
+
+// Order <-> Review (One-to-One)
+Order.hasOne(Review, {
+  foreignKey: 'orderId',
+  as: 'review',
+});
+Review.belongsTo(Order, {
+  foreignKey: 'orderId',
+  as: 'order',
+});
+
 export {
   User,
   Supplier,
@@ -94,4 +125,5 @@ export {
   CardCode,
   Order,
   Payment,
+  Review,
 };
